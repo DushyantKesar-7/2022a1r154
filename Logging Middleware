@@ -1,3 +1,28 @@
+// loggingMiddleware.js
+
+const axios = require('axios');
+
+async function log(stack, level, packageName, message) {
+    const logEntry = {
+        stack: stack,
+        level: level,
+        package: packageName,
+        message: message
+    };
+
+    try {
+        const response = await axios.post('http://20.244.56.144/evaluation-service/logs', logEntry);
+        console.log(response.data.message);
+    } catch (error) {
+        console.error('Logging failed:', error.response ? error.response.data : error.message);
+    }
+}
+
+log('backend', 'error', 'handler', 'received string, expected bool')
+    .then(() => console.log('Log submitted successfully'))
+    .catch(err => console.error(err));
+
+// app.js
 const express = require('express');
 const { log } = require('./loggingMiddleware');
 
